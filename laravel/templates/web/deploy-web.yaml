@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-web
+  labels:
+    app: {{ .Release.Name }}
+    tier: {{ .Values.app.tier }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}
+      tier: {{ .Values.app.tier }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}
+        tier: {{ .Values.app.tier }}
+    spec:
+      # Init Containers are executed before the actual containers start
+      # https://kubernetes.io/docs/concepts/workloads/pods/init-containers/
+      # - perform migration
+      # - cache config
+      # - copy directory structure to persistent volume
+      initContainers:
+       - name: artisan
+         image: "{{ .Values.webImage.name }}:{{ .Values.webImage.tag }}"
+         args:
+           - /bin/bash
+           - -c
+           - php artisan migrate --force && php artisan config:cache && cp -Rnp /var/www/html/storage/* /mnt
+         envFrom:
+                 # - configMapRef:
+                 #name: conf-env
+           - configMapRef: { name: conf-env }
+         volumeMounts:
+           - name: web-persistent-storage
+             mountPath: /mnt
+      containers:
+       - name: web
+         image: "{{ .Values.webImage.name }}:{{ .Values.webImage.tag }}"
+         envFrom:
+                 #- configMapRef:
+                 #name: myapp-laravel
+          - configMapRef: { name: conf-env }
+         ports:
+          - containerPort: 80
+         volumeMounts:
+          - name: web-persistent-storage
+            mountPath: /var/www/html/storage
+      volumes:
+       - name: web-persistent-storage
+         persistentVolumeClaim:
+           claimName: web-pv-claim

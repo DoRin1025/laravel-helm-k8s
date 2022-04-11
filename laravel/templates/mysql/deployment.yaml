@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-mysql
+  labels:
+    app: {{ .Release.Name }}
+    tier: mysql
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}
+      tier: mysql
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}
+        tier: mysql
+    spec:
+      containers:
+      - image: {{ .Values.mysqlImage.name }}
+        #   args:
+        # - "--ignore-db-dir=lost+found"
+        name: mysql
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: password
+        - name: MYSQL_USER
+          value: laravel
+        - name: MYSQL_DATABASE
+          value: laravel
+        - name: MYSQL_PASSWORD
+          #  value: IAqw8yE1mAwhJt59AEV@V
+          # read the password from the ConfigMap
+          # so we are sure laravel and MySQL use the same
+          valueFrom:
+            configMapKeyRef:
+              name: myapp-laravel
+              key: DB_PASSWORD
+        ports:
+        - containerPort: {{ .Values.mysqlImage.port }}
+          name: mysql
+        volumeMounts:
+        - name: mysql-persistent-storage
+          mountPath: /var/lib/mysql
+      volumes:
+      - name: mysql-persistent-storage
+        persistentVolumeClaim:
+          claimName: mysql-pv-claim
+

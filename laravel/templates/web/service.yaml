@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-web
+  labels:
+    app: {{ .Release.Name }}
+    tier: {{ .Values.app.tier }}
+spec:
+  type: LoadBalancer
+  selector:
+    app: {{ .Release.Name }}
+    tier: {{ .Values.app.tier }}
+  ports:
+    - port: 80
+      # NodePort will be automatically assigned
+
+

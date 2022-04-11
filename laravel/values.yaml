@@ -1,0 +1,17 @@
+# App name
+app:
+ name: "myapp"
+ tier: "web"
+
+#Image name, tag and pull policy
+webImage:
+  name: "dorin1025/laravel-web"
+  tag: "3"
+
+mysqlImage:
+  name: "mysql:5.7"
+  port: "3306"    
+
+redisImage:
+  name: "redis"
+  port: "6379"

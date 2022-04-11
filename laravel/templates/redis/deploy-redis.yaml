@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-redis
+  labels:
+    app: {{ .Release.Name }}
+    tier: redis
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}
+      tier: redis
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}
+        tier: redis
+    spec:
+      containers:
+      - name: redis
+        image: {{ .Values.redisImage.name }}
+        ports:
+        - containerPort: {{ .Values.redisImage.port }}
+

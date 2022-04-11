@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-redis
+  labels:
+    app: {{ .Release.Name }}
+    tier: redis
+spec:
+  ports:
+  - port: {{ .Values.redisImage.port }}
+    targetPort: {{ .Values.redisImage.port }}
+  selector:
+    app: {{ .Release.Name }}
+    tier: redis
+
