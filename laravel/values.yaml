@@ -2,7 +2,7 @@
 app:
  name: "myapp"
  tier: "web"
-
+ port: "80"
 #Image name, tag and pull policy
 webImage:
   name: "dorin1025/laravel-web"
@@ -10,8 +10,26 @@ webImage:
 
 mysqlImage:
   name: "mysql:5.7"
-  port: "3306"    
+  port: "3306"
 
 redisImage:
   name: "redis"
   port: "6379"
+
+mysqlDeploy:
+  name: "mysql"
+  mysqlRootValue: "password"
+  mysqlUserValue: "laravel"
+  mysqlDBValue: "laravel"
+ 
+pvc:
+  appns: "default"
+  mysqlmountPath: "/var/lib/mysql"
+  mysqlPVPath: "/var/lib/data/vol02" 
+  storage: "1Gi"
+  appmountPath: "/var/www/html/storage"
+  appPVPath: "/var/lib/data/vol01"
+  appStorage: "1Gi"
+
+redisapp:
+  tier: "redis"

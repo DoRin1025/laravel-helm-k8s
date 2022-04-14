@@ -4,20 +4,20 @@ metadata:
   name: {{ .Release.Name }}-redis
   labels:
     app: {{ .Release.Name }}
-    tier: redis
+    tier: {{ .Values.redisapp.tier }}
 spec:
   selector:
     matchLabels:
       app: {{ .Release.Name }}
-      tier: redis
+      tier: {{ .Values.redisapp.tier }}
   template:
     metadata:
       labels:
         app: {{ .Release.Name }}
-        tier: redis
+        tier: {{ .Values.redisapp.tier }}
     spec:
       containers:
-      - name: redis
+      - name: {{ .Values.redisapp.tier }}
         image: {{ .Values.redisImage.name }}
         ports:
         - containerPort: {{ .Values.redisImage.port }}

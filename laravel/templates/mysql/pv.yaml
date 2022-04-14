@@ -10,9 +10,9 @@ spec:
     - ReadWriteOnce
   persistentVolumeReclaimPolicy: Retain
   claimRef:
-    namespace: default
-    name: mysql-pv-claim
+    namespace: {{ .Values.pvc.appns }}
+    name: {{ .Values.mysqlDeploy.name }}-pv-claim
   capacity:
-    storage: 1Gi
+    storage: {{ .Values.pvc.storage }}
   hostPath:
-    path: "/var/lib/data/vol02"
+    path: "{{ .Values.pvc.mysqlPVPath }}"

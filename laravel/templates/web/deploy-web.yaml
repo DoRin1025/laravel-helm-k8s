@@ -31,23 +31,23 @@ spec:
          envFrom:
                  # - configMapRef:
                  #name: conf-env
-           - configMapRef: { name: conf-env }
+           - configMapRef: { name: {{ .Release.Name }}-laravel }
          volumeMounts:
-           - name: web-persistent-storage
+           - name: {{ .Values.app.tier }}-persistent-storage
              mountPath: /mnt
       containers:
-       - name: web
+       - name: {{ .Values.app.tier }}
          image: "{{ .Values.webImage.name }}:{{ .Values.webImage.tag }}"
          envFrom:
                  #- configMapRef:
                  #name: myapp-laravel
-          - configMapRef: { name: conf-env }
+          - configMapRef: { name: {{ .Release.Name }}-laravel }
          ports:
-          - containerPort: 80
+          - containerPort: {{ .Values.app.port }}
          volumeMounts:
-          - name: web-persistent-storage
-            mountPath: /var/www/html/storage
+          - name: {{ .Values.app.tier }}-persistent-storage
+            mountPath: {{ .Values.pvc.appmountPath }}
       volumes:
-       - name: web-persistent-storage
+       - name: {{ .Values.app.tier }}-persistent-storage
          persistentVolumeClaim:
-           claimName: web-pv-claim
+           claimName: {{ .Values.app.tier }}-pv-claim

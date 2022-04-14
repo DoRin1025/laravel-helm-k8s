@@ -10,9 +10,9 @@ spec:
     - ReadWriteOnce
   persistentVolumeReclaimPolicy: Retain
   claimRef:
-    namespace: default
-    name: web-pv-claim
+    namespace: {{ .Values.pvc.appns }}
+    name: {{ .Values.app.tier }}-pv-claim
   capacity:
-    storage: 1Gi
+    storage: {{ .Values.pvc.appStorage }}
   hostPath:
-    path: "/var/lib/data/vol01"
+    path: "{{ .Values.pvc.appPVPath }}"

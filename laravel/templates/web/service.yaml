@@ -6,12 +6,14 @@ metadata:
     app: {{ .Release.Name }}
     tier: {{ .Values.app.tier }}
 spec:
-  type: LoadBalancer
+        #type: LoadBalancer
+        #type: NodePort
+  type: ClusterIP
   selector:
     app: {{ .Release.Name }}
     tier: {{ .Values.app.tier }}
   ports:
-    - port: 80
+    - port: {{ .Values.app.port }}
       # NodePort will be automatically assigned
 
 

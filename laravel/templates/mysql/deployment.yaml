@@ -4,46 +4,47 @@ metadata:
   name: {{ .Release.Name }}-mysql
   labels:
     app: {{ .Release.Name }}
-    tier: mysql
+    tier: {{ .Values.mysqlDeploy.name }}
 spec:
   selector:
     matchLabels:
       app: {{ .Release.Name }}
-      tier: mysql
+      tier: {{ .Values.mysqlDeploy.name }}
   template:
     metadata:
       labels:
         app: {{ .Release.Name }}
-        tier: mysql
+        tier: {{ .Values.mysqlDeploy.name }}
     spec:
       containers:
       - image: {{ .Values.mysqlImage.name }}
         #   args:
         # - "--ignore-db-dir=lost+found"
-        name: mysql
+        name: {{ .Values.mysqlDeploy.name }}
         env:
         - name: MYSQL_ROOT_PASSWORD
-          value: password
+          value: {{ .Values.mysqlDeploy.mysqlRootValue }}
         - name: MYSQL_USER
-          value: laravel
+          value:  {{ .Values.mysqlDeploy.mysqlUserValue }}
         - name: MYSQL_DATABASE
-          value: laravel
+          value:  {{ .Values.mysqlDeploy.mysqlDBValue }}
         - name: MYSQL_PASSWORD
           #  value: IAqw8yE1mAwhJt59AEV@V
           # read the password from the ConfigMap
           # so we are sure laravel and MySQL use the same
           valueFrom:
             configMapKeyRef:
-              name: myapp-laravel
+                    #name: conf-env
+              name: {{ .Values.app.name }}-laravel
               key: DB_PASSWORD
         ports:
         - containerPort: {{ .Values.mysqlImage.port }}
-          name: mysql
+          name: {{ .Values.mysqlDeploy.name }}
         volumeMounts:
-        - name: mysql-persistent-storage
-          mountPath: /var/lib/mysql
+        - name: {{ .Values.mysqlDeploy.name }}-persistent-storage
+          mountPath: {{ .Values.pvc.mysqlmountPath }}
       volumes:
-      - name: mysql-persistent-storage
+      - name: {{ .Values.mysqlDeploy.name }}-persistent-storage
         persistentVolumeClaim:
-          claimName: mysql-pv-claim
+          claimName: {{ .Values.mysqlDeploy.name }}-pv-claim
 
